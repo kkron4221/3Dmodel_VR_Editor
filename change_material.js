@@ -1,0 +1,63 @@
+var createScene = function () {
+    // This creates a basic Babylon Scene object (non-mesh)
+    var scene = new BABYLON.Scene(engine);
+
+    // This creates and positions a free camera (non-mesh)
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+
+    // This targets the camera to scene origin
+    camera.setTarget(BABYLON.Vector3.Zero());
+
+    // This attaches the camera to the canvas
+    camera.attachControl(canvas, true);
+
+    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+
+    // Default intensity is 1. Let's dim the light a small amount
+    light.intensity = 0.7;
+
+    var blueMat = new BABYLON.StandardMaterial("blue", scene);
+    blueMat.emissiveColor = new BABYLON.Color3(0,0,1);
+    
+    var redMat = new BABYLON.StandardMaterial("red", scene);
+    redMat.emissiveColor = new BABYLON.Color3(1,0,0);
+
+    // Our built-in 'sphere' shape.
+    var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
+
+    // Move the sphere upward 1/2 its height
+    sphere.position.y = 1;
+
+	var setColor = function(but) {   
+		switch(but) {
+            case 0: 
+                sphere.material = blueMat;
+            break
+            case 1: 
+                sphere.material = redMat;
+            break
+        }
+	}
+
+    // Our built-in 'ground' shape.
+    var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+
+    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+    var selectBox = new BABYLON.GUI.SelectionPanel("sp");
+    selectBox.width = 0.12;
+    selectBox.height = 0.12;
+    selectBox.horizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
+    selectBox.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+
+    advancedTexture.addControl(selectBox);
+
+    var colorGroup = new BABYLON.GUI.RadioGroup("Color");
+    colorGroup.addRadio("Blue", setColor, true);
+    colorGroup.addRadio("Red", setColor);
+
+    selectBox.addGroup(colorGroup)
+
+    return scene;
+};

@@ -33,13 +33,28 @@ var createScene = function () {
 
     sphere_ojama.position.y = 0.08;
 
+    var hk = new BABYLON.HavokPlugin();
+
+    scene.enablePhysics(new BABYLON.Vector3(0, -9.8, 0), hk);
+
+    var sphereAggregate = new BABYLON.PhysicsAggregate(sphere, BABYLON.PhysicsShapeType.SPHERE, { mass: 1, restitution:0.75}, scene);
+
+    let ojamaAggregate = null;
+
 	var setColor = function(but) {   
 		switch(but) {
             case 0: 
                 sphere_ojama.material = blueMat;
+                if(ojamaAggregate) {
+                    ojamaAggregate.dispose();
+                    ojamaAggregate = null;
+                }
             break
             case 1: 
                 sphere_ojama.material = redMat;
+                if(!ojamaAggregate) {
+                    ojamaAggregate = new BABYLON.PhysicsAggregate(sphere_ojama, BABYLON.PhysicsShapeType.SPHERE, { mass: 1, restitution: 0.75}, scene);
+                }
             break
         }
 	}
@@ -50,6 +65,8 @@ var createScene = function () {
 
     // Our built-in 'ground' shape.
     var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+
+    var groundAggregate = new BABYLON.PhysicsAggregate(ground, BABYLON.PhysicsShapeType.BOX, { mass: 0}, scene);
 
     var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
